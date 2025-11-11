@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if not exist .env copy .env.example .env)",
+      "Bash(npm install)",
+      "Bash(npm start)",
+      "Bash(netstat:*)",
+      "Bash(curl:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(python:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill /F /PID 48356)",
+      "Bash(taskkill //F //PID 48356)",
+      "Bash(taskkill:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
