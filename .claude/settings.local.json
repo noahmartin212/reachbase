@@ -11,7 +11,15 @@
       "Bash(findstr:*)",
       "Bash(taskkill /F /PID 48356)",
       "Bash(taskkill //F //PID 48356)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(git push:*)",
+      "Bash(npm run build:*)",
+      "Bash($env:PORT=3000)",
+      "Bash(git restore:*)",
+      "Bash(del \"c:\\Users\\Noah\\outreach clone\\frontend\\.env\")",
+      "Bash(timeout:*)",
+      "Bash(PORT=3000 npm start)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

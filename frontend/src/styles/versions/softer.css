@@ -1,0 +1,79 @@
+/**
+ * Softer Style Version
+ * Minimal borders with soft shadows for depth
+ */
+
+:root[data-style-version="softer"] {
+  /* Border widths - mostly removed */
+  --border-width: 0px;
+
+  /* Border colors - lighter when used */
+  --border-color: transparent;
+  --border-color-hover: rgb(243 244 246); /* gray-100 */
+  --divider-color: rgb(243 244 246); /* gray-100 */
+
+  /* Card styles - no borders, stronger shadows */
+  --card-border: none;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+  --card-rounded: 0.75rem; /* rounded-xl */
+
+  /* Input styles - lighter borders */
+  --input-border: 1px solid rgb(229 231 235); /* gray-200 */
+  --input-focus-ring-width: 1px;
+  --input-focus-ring-color: rgba(96, 165, 250, 0.5); /* primary-400 */
+
+  /* Container borders - removed */
+  --container-border: none;
+}
+
+/* Apply to elements using CSS variables */
+:root[data-style-version="softer"] .card {
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-rounded);
+}
+
+:root[data-style-version="softer"] .header-border {
+  border-bottom: var(--border-width) solid var(--divider-color);
+}
+
+:root[data-style-version="softer"] .sidebar-border {
+  border-right: var(--border-width) solid var(--divider-color);
+}
+
+:root[data-style-version="softer"] .divider {
+  border-color: var(--divider-color);
+}
+
+:root[data-style-version="softer"] .container-border {
+  border: var(--container-border);
+}
+
+/* Override Tailwind border classes when in softer mode */
+:root[data-style-version="softer"] .border {
+  border-width: 0 !important;
+}
+
+:root[data-style-version="softer"] .border-gray-200,
+:root[data-style-version="softer"] .border-gray-300 {
+  border-color: transparent !important;
+}
+
+/* Keep dividers visible but lighter */
+:root[data-style-version="softer"] .border-b,
+:root[data-style-version="softer"] .border-t,
+:root[data-style-version="softer"] .border-l,
+:root[data-style-version="softer"] .border-r {
+  border-color: var(--divider-color) !important;
+}
+
+/* Enhance shadows to compensate for missing borders */
+:root[data-style-version="softer"] .shadow-sm {
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* Make cards rounder */
+:root[data-style-version="softer"] .rounded-lg,
+:root[data-style-version="softer"] .rounded-xl {
+  border-radius: var(--card-rounded) !important;
+}

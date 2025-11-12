@@ -1,0 +1,50 @@
+/**
+ * Default Style Version
+ * Current design with defined borders and structure
+ */
+
+:root[data-style-version="default"] {
+  /* Border widths */
+  --border-width: 1px;
+
+  /* Border colors */
+  --border-color: rgb(229 231 235); /* gray-200 */
+  --border-color-hover: rgb(209 213 219); /* gray-300 */
+  --divider-color: rgb(229 231 235); /* gray-200 */
+
+  /* Card styles */
+  --card-border: 1px solid rgb(229 231 235);
+  --card-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow-sm */
+  --card-rounded: 0.5rem; /* rounded-lg */
+
+  /* Input styles */
+  --input-border: 1px solid rgb(209 213 219); /* gray-300 */
+  --input-focus-ring-width: 2px;
+  --input-focus-ring-color: rgba(59, 130, 246, 0.5); /* primary-500 */
+
+  /* Container borders */
+  --container-border: 1px solid rgb(229 231 235);
+}
+
+/* Apply to elements using CSS variables */
+:root[data-style-version="default"] .card {
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-rounded);
+}
+
+:root[data-style-version="default"] .header-border {
+  border-bottom: var(--border-width) solid var(--divider-color);
+}
+
+:root[data-style-version="default"] .sidebar-border {
+  border-right: var(--border-width) solid var(--divider-color);
+}
+
+:root[data-style-version="default"] .divider {
+  border-color: var(--divider-color);
+}
+
+:root[data-style-version="default"] .container-border {
+  border: var(--container-border);
+}
