@@ -12,6 +12,8 @@ import {
   ArrowPathIcon,
   ChevronDownIcon,
   XMarkIcon,
+  SparklesIcon,
+  LightBulbIcon,
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 
@@ -44,6 +46,11 @@ interface Email {
   sent_at?: string;
   scheduled_at?: string;
   tags: string[];
+  aiReplyLikelihood?: number;
+  aiBestSendTime?: string;
+  aiSubjectScore?: number;
+  aiSubjectFeedback?: string;
+  aiInsights?: string;
 }
 
 interface EmailStats {
@@ -156,6 +163,18 @@ const Emails: React.FC = () => {
     } catch {
       return '-';
     }
+  };
+
+  const getReplyLikelihoodColor = (score: number) => {
+    if (score >= 70) return 'bg-green-100 text-green-700 border-green-200';
+    if (score >= 50) return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+    return 'bg-red-100 text-red-700 border-red-200';
+  };
+
+  const getSubjectScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
@@ -377,6 +396,12 @@ const Emails: React.FC = () => {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center">
+                      <SparklesIcon className="w-4 h-4 mr-1" />
+                      AI Intelligence
+                    </div>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Engagement
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -421,6 +446,25 @@ const Emails: React.FC = () => {
                         {getStatusIcon(email.status)}
                         <span className="ml-1.5 capitalize">{email.status}</span>
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {email.direction === 'outbound' && email.aiReplyLikelihood !== undefined ? (
+                        <div className="space-y-1.5">
+                          <div className={`inline-flex items-center px-2 py-1 rounded border text-xs font-medium ${getReplyLikelihoodColor(email.aiReplyLikelihood)}`}>
+                            {email.aiReplyLikelihood}% reply likelihood
+                          </div>
+                          {email.aiSubjectScore !== undefined && (
+                            <div className="flex items-center text-xs">
+                              <LightBulbIcon className={`w-3.5 h-3.5 mr-1 ${getSubjectScoreColor(email.aiSubjectScore)}`} />
+                              <span className={getSubjectScoreColor(email.aiSubjectScore)}>
+                                Subject: {email.aiSubjectScore}/100
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
@@ -532,6 +576,57 @@ const Emails: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* AI Insights */}
+              {selectedEmail.direction === 'outbound' && (selectedEmail.aiReplyLikelihood !== undefined || selectedEmail.aiInsights) && (
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 bg-primary-600 rounded-lg flex-shrink-0">
+                      <SparklesIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-2">AI Intelligence</h3>
+                      <div className="space-y-2">
+                        {selectedEmail.aiReplyLikelihood !== undefined && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700">Reply Likelihood:</span>
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full border text-sm font-semibold ${getReplyLikelihoodColor(selectedEmail.aiReplyLikelihood)}`}>
+                              {selectedEmail.aiReplyLikelihood}%
+                            </span>
+                          </div>
+                        )}
+                        {selectedEmail.aiBestSendTime && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700">Optimal Send Time:</span>
+                            <span className="text-sm font-medium text-primary-700">{selectedEmail.aiBestSendTime}</span>
+                          </div>
+                        )}
+                        {selectedEmail.aiSubjectScore !== undefined && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700">Subject Line Score:</span>
+                            <span className={`text-sm font-semibold ${getSubjectScoreColor(selectedEmail.aiSubjectScore)}`}>
+                              {selectedEmail.aiSubjectScore}/100
+                            </span>
+                          </div>
+                        )}
+                        {selectedEmail.aiSubjectFeedback && (
+                          <div className="mt-2 pt-2 border-t border-primary-200">
+                            <p className="text-xs text-gray-700">
+                              <LightBulbIcon className="w-4 h-4 inline mr-1 text-primary-600" />
+                              {selectedEmail.aiSubjectFeedback}
+                            </p>
+                          </div>
+                        )}
+                        {selectedEmail.aiInsights && (
+                          <div className="mt-2 pt-2 border-t border-primary-200">
+                            <p className="text-xs text-gray-700">{selectedEmail.aiInsights}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Engagement Stats */}
               <div className="grid grid-cols-4 gap-4 mb-6">

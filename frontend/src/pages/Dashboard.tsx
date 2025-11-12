@@ -2,12 +2,16 @@ import { useState } from 'react';
 import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
+  SparklesIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  LightBulbIcon,
+  FireIcon,
 } from '@heroicons/react/24/outline';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Dashboard: React.FC = () => {
-  const [timePeriod, setTimePeriod] = useState<'today' | 'week' | 'month'>('week');
-  const [emailPeriod, setEmailPeriod] = useState<'week' | 'month' | 'quarter'>('week');
+  const [timePeriod] = useState<'today' | 'week' | 'month'>('week');
 
   // Sales-focused stats - dynamic based on time period
   const getStatsForPeriod = (period: 'today' | 'week' | 'month') => {
@@ -122,7 +126,7 @@ const Dashboard: React.FC = () => {
 
   const stats = getStatsForPeriod(timePeriod);
 
-  // Email performance over time (sales-relevant)
+  // Email performance over time
   const emailPerformanceData = [
     { day: 'Mon', sent: 89, opened: 38, replied: 12 },
     { day: 'Tue', sent: 95, opened: 42, replied: 15 },
@@ -133,14 +137,132 @@ const Dashboard: React.FC = () => {
     { day: 'Sun', sent: 32, opened: 12, replied: 4 },
   ];
 
-  // Pipeline/Deal stages
+  // Pipeline data
   const pipelineData = [
-    { stage: 'Prospecting', count: 145, value: '$234K' },
-    { stage: 'Qualified', count: 89, value: '$456K' },
-    { stage: 'Meeting', count: 56, value: '$678K' },
-    { stage: 'Proposal', count: 34, value: '$890K' },
-    { stage: 'Negotiation', count: 23, value: '$567K' },
-    { stage: 'Closed Won', count: 12, value: '$234K' },
+    { stage: 'New Leads', count: 45, value: '$450K' },
+    { stage: 'Contacted', count: 32, value: '$380K' },
+    { stage: 'Qualified', count: 18, value: '$290K' },
+    { stage: 'Proposal', count: 12, value: '$215K' },
+    { stage: 'Negotiation', count: 7, value: '$165K' },
+    { stage: 'Closed Won', count: 3, value: '$95K' },
+  ];
+
+  // Priority Tasks with AI scoring (showing top 3)
+  const priorityTasks = [
+    {
+      id: 1,
+      task: 'Follow up with Enterprise Corp',
+      description: 'High-value lead, opened email 3 times',
+      due: 'Today, 2:00 PM',
+      priority: 'urgent' as const,
+      contact: 'John Smith',
+      company: 'Enterprise Corp',
+      aiScore: 95,
+      aiReason: 'High engagement + approaching deal deadline',
+      tags: ['high-value', 'hot-lead'],
+      estimatedValue: '$125K',
+    },
+    {
+      id: 2,
+      task: 'Send proposal to Acme Inc',
+      description: 'Requested pricing, replied to last email',
+      due: 'Today, 4:30 PM',
+      priority: 'high' as const,
+      contact: 'Jane Doe',
+      company: 'Acme Inc',
+      aiScore: 88,
+      aiReason: 'Positive reply sentiment + demo completed',
+      tags: ['proposal-ready'],
+      estimatedValue: '$85K',
+    },
+    {
+      id: 3,
+      task: 'Call TechStart about demo',
+      description: 'Scheduled demo for tomorrow, prep materials',
+      due: 'Today, 5:00 PM',
+      priority: 'high' as const,
+      contact: 'Sarah Johnson',
+      company: 'TechStart',
+      aiScore: 82,
+      aiReason: 'Strong fit based on company profile',
+      tags: ['demo-scheduled'],
+      estimatedValue: '$65K',
+    },
+    {
+      id: 4,
+      task: 'Review "Q4 Enterprise" sequence performance',
+      description: 'Low open rates, may need template refresh',
+      due: 'Tomorrow, 10:00 AM',
+      priority: 'medium' as const,
+      contact: null,
+      company: null,
+      aiScore: 75,
+      aiReason: 'Declining metrics require attention',
+      tags: ['sequence-optimization'],
+      estimatedValue: null,
+    },
+    {
+      id: 5,
+      task: 'Nurture cold leads from last month',
+      description: '23 leads have gone cold, send re-engagement',
+      due: 'Tomorrow, 2:00 PM',
+      priority: 'medium' as const,
+      contact: null,
+      company: null,
+      aiScore: 68,
+      aiReason: 'Opportunity to recover stalled deals',
+      tags: ['re-engagement'],
+      estimatedValue: null,
+    },
+    {
+      id: 6,
+      task: 'Update contact information for imports',
+      description: 'New batch of 45 contacts needs verification',
+      due: 'Friday, 9:00 AM',
+      priority: 'low' as const,
+      contact: null,
+      company: null,
+      aiScore: 45,
+      aiReason: 'Low urgency administrative task',
+      tags: ['data-cleanup'],
+      estimatedValue: null,
+    },
+  ];
+
+  // AI Suggestions
+  const aiSuggestions = [
+    {
+      type: 'opportunity',
+      icon: FireIcon,
+      title: 'High-Intent Leads Detected',
+      description: '3 contacts have opened your emails 5+ times in the past 2 days. Strike while the iron is hot!',
+      action: 'View Leads',
+      priority: 'high',
+    },
+    {
+      type: 'optimization',
+      icon: LightBulbIcon,
+      title: 'Improve Email Performance',
+      description: 'Your subject lines average 42% open rate. Try personalizing with {{company_name}} for a 15% boost.',
+      action: 'See Examples',
+      priority: 'medium',
+    },
+    {
+      type: 'timing',
+      icon: ClockIcon,
+      title: 'Best Time to Send',
+      description: 'Based on your data, emails sent Tuesday-Thursday 9-11 AM get 23% more replies.',
+      action: 'Optimize Schedule',
+      priority: 'medium',
+    },
+    {
+      type: 'alert',
+      icon: ExclamationTriangleIcon,
+      title: 'Stale Leads Alert',
+      description: '18 promising leads haven\'t been contacted in 14+ days. You might be losing momentum.',
+      action: 'Re-engage Now',
+      priority: 'high',
+    },
   ];
 
   return (
@@ -149,347 +271,243 @@ const Dashboard: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Welcome back! Here's your sales overview.</p>
+          <p className="text-sm text-gray-500 mt-1">AI-powered insights to maximize your outreach effectiveness</p>
         </div>
         <div className="flex space-x-2">
           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-            Export Report
+            View All Tasks
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700">
-            New Sequence
-          </button>
-        </div>
-      </div>
-
-      {/* Time Period Selector */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Performance Overview</h2>
-        <div className="flex items-center bg-white border border-gray-200 rounded-lg p-1">
-          <button
-            onClick={() => setTimePeriod('today')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              timePeriod === 'today'
-                ? 'bg-primary-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            Today
-          </button>
-          <button
-            onClick={() => setTimePeriod('week')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              timePeriod === 'week'
-                ? 'bg-primary-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            This Week
-          </button>
-          <button
-            onClick={() => setTimePeriod('month')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              timePeriod === 'month'
-                ? 'bg-primary-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            This Month
+          <button className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 flex items-center">
+            <SparklesIcon className="w-4 h-4 mr-2" />
+            AI Suggestions
           </button>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-              <div className="flex items-baseline space-x-2">
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                <span className={`text-sm font-medium flex items-center ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stat.changeType === 'positive' ? (
-                    <ArrowTrendingUpIcon className="w-4 h-4 mr-1" />
-                  ) : (
-                    <ArrowTrendingDownIcon className="w-4 h-4 mr-1" />
-                  )}
-                  {stat.change}
-                </span>
+      {/* AI Suggestions Banner */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-primary-600 rounded-lg">
+              <SparklesIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">AI Insights Ready</h3>
+              <p className="text-sm text-gray-600">We've analyzed your sales activity and identified {aiSuggestions.length} actionable recommendations</p>
+            </div>
+          </div>
+          <button className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center">
+            View All
+            <span className="ml-1">→</span>
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          {aiSuggestions.slice(0, 2).map((suggestion, index) => {
+            const Icon = suggestion.icon;
+            return (
+              <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="flex items-start space-x-3">
+                  <div className={`p-2 rounded-lg ${
+                    suggestion.priority === 'high' ? 'bg-red-100' : 'bg-primary-100'
+                  }`}>
+                    <Icon className={`w-5 h-5 ${
+                      suggestion.priority === 'high' ? 'text-red-600' : 'text-primary-600'
+                    }`} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900 text-sm">{suggestion.title}</h4>
+                    <p className="text-xs text-gray-600 mt-1">{suggestion.description}</p>
+                    <button className="text-xs font-medium text-primary-600 hover:text-primary-700 mt-2">
+                      {suggestion.action} →
+                    </button>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-gray-700">
-                {stat.trend}
-              </p>
-              <p className="text-xs text-gray-500">{stat.subtitle}</p>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Compact Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <div key={stat.name} className="bg-white rounded-lg border border-gray-200 p-4">
+            <p className="text-xs font-medium text-gray-500 uppercase mb-2">{stat.name}</p>
+            <div className="flex items-baseline space-x-2">
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <span className={`text-xs font-medium flex items-center ${
+                stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {stat.changeType === 'positive' ? (
+                  <ArrowTrendingUpIcon className="w-3 h-3 mr-0.5" />
+                ) : (
+                  <ArrowTrendingDownIcon className="w-3 h-3 mr-0.5" />
+                )}
+                {stat.change}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Email Performance Chart */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Email Performance</h2>
-              <p className="text-sm text-gray-500">Track your outreach effectiveness over time</p>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setEmailPeriod('week')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg ${
-                  emailPeriod === 'week'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                This Week
-              </button>
-              <button
-                onClick={() => setEmailPeriod('month')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg ${
-                  emailPeriod === 'month'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                This Month
-              </button>
-              <button
-                onClick={() => setEmailPeriod('quarter')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg ${
-                  emailPeriod === 'quarter'
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                This Quarter
-              </button>
-            </div>
-          </div>
-
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={emailPerformanceData}>
-                <defs>
-                  <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorOpened" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorReplied" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis
-                  dataKey="day"
-                  stroke="#9ca3af"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis
-                  stroke="#9ca3af"
-                  tick={{ fontSize: 12 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                  }}
-                />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="sent"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  fill="url(#colorSent)"
-                  name="Sent"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="opened"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  fill="url(#colorOpened)"
-                  name="Opened"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="replied"
-                  stroke="#8b5cf6"
-                  strokeWidth={2}
-                  fill="url(#colorReplied)"
-                  name="Replied"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Two Column Layout */}
+      {/* Two Column Layout: Priority Tasks + Email Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pipeline Overview */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="space-y-4">
+        {/* Priority Tasks - Top 3 */}
+        <div className="bg-white rounded-xl border border-gray-200">
+          <div className="p-5 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Sales Pipeline</h2>
-              <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                View all deals
-              </button>
-            </div>
-            <div className="space-y-3">
-              {pipelineData.map((stage, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      index === 0 ? 'bg-blue-500' :
-                      index === 1 ? 'bg-green-500' :
-                      index === 2 ? 'bg-yellow-500' :
-                      index === 3 ? 'bg-orange-500' :
-                      index === 4 ? 'bg-red-500' :
-                      'bg-purple-500'
-                    }`}></div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{stage.stage}</p>
-                      <p className="text-xs text-gray-500">{stage.count} deals</p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900">{stage.value}</span>
-                </div>
-              ))}
-            </div>
-            <div className="pt-3 border-t border-gray-200">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600">Total Pipeline Value</span>
-                <span className="text-lg font-bold text-gray-900">$3.1M</span>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Top Priority Tasks</h2>
+                <p className="text-xs text-gray-500 mt-1">AI-ranked by urgency & value</p>
               </div>
+              <SparklesIcon className="w-5 h-5 text-primary-600" />
             </div>
           </div>
-        </div>
-
-        {/* Top Performing Sequences */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Top Performing Sequences</h2>
-            <div className="space-y-4">
-              {[
-                { name: 'Q4 Enterprise Outreach', contacts: 125, sent: 458, opened: 245, replied: 56, replyRate: '12.2%' },
-                { name: 'Product Demo Follow-up', contacts: 89, sent: 267, opened: 189, replied: 48, replyRate: '18.0%' },
-                { name: 'Cold Outreach - Tech', contacts: 156, sent: 623, opened: 312, replied: 71, replyRate: '11.4%' },
-              ].map((sequence, index) => (
-                <div key={index} className="p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition-colors">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-medium text-gray-900">{sequence.name}</h3>
-                    <span className={`text-sm font-semibold px-2 py-1 rounded ${
-                      parseFloat(sequence.replyRate) > 15 ? 'bg-green-100 text-green-700' :
-                      parseFloat(sequence.replyRate) > 10 ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {sequence.replyRate}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-4 gap-3 text-sm">
-                    <div>
-                      <p className="text-gray-500 text-xs">Contacts</p>
-                      <p className="font-semibold text-gray-900">{sequence.contacts}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Sent</p>
-                      <p className="font-semibold text-gray-900">{sequence.sent}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Opened</p>
-                      <p className="font-semibold text-gray-900">{sequence.opened}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Replied</p>
-                      <p className="font-semibold text-green-600">{sequence.replied}</p>
+          <div className="divide-y divide-gray-200">
+            {priorityTasks.slice(0, 3).map((task) => (
+              <div key={task.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-semibold text-gray-900 text-sm truncate">{task.task}</h3>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${
+                            task.priority === 'urgent' ? 'bg-red-100 text-red-700' :
+                            task.priority === 'high' ? 'bg-orange-100 text-orange-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {task.priority.toUpperCase()}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 mb-2">{task.description}</p>
+                        <div className="flex items-center space-x-3 text-xs text-gray-500">
+                          <div className="flex items-center">
+                            <ClockIcon className="w-3 h-3 mr-1" />
+                            {task.due}
+                          </div>
+                          {task.estimatedValue && (
+                            <span className="text-green-600 font-medium">{task.estimatedValue}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <div className="text-xl font-bold text-primary-600">{task.aiScore}</div>
+                        <div className="text-xs text-gray-400">AI</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
+          <div className="p-3 bg-gray-50 border-t border-gray-200">
+            <button className="text-xs font-medium text-primary-600 hover:text-primary-700 w-full text-center">
+              View All {priorityTasks.length + 12} Tasks →
+            </button>
+          </div>
+        </div>
+
+        {/* Email Performance Chart */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Email Performance</h2>
+            <p className="text-xs text-gray-500 mt-1">Last 7 days activity</p>
+          </div>
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={emailPerformanceData}>
+              <defs>
+                <linearGradient id="colorSent" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorOpened" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorReplied" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+              <YAxis tick={{ fontSize: 12 }} stroke="#9ca3af" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
+              <Area type="monotone" dataKey="sent" stroke="#3b82f6" fillOpacity={1} fill="url(#colorSent)" strokeWidth={2} />
+              <Area type="monotone" dataKey="opened" stroke="#10b981" fillOpacity={1} fill="url(#colorOpened)" strokeWidth={2} />
+              <Area type="monotone" dataKey="replied" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorReplied)" strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Recent Activity & Upcoming Tasks */}
+      {/* Pipeline Overview + AI Suggestions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-            <div className="space-y-4">
-              {[
-                { type: 'reply', action: 'John Doe replied to "Q4 Enterprise Outreach"', time: '5 minutes ago', status: 'positive' },
-                { type: 'email', action: 'Sent 12 emails in "Product Demo Follow-up"', time: '1 hour ago', status: 'neutral' },
-                { type: 'meeting', action: 'Meeting scheduled with Sarah Johnson', time: '2 hours ago', status: 'positive' },
-                { type: 'contact', action: 'Added 8 new contacts to "Cold Outreach - Tech"', time: '3 hours ago', status: 'neutral' },
-                { type: 'bounce', action: 'Email bounced: invalid@example.com', time: '4 hours ago', status: 'negative' },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-start space-x-3 pb-3 border-b border-gray-100 last:border-0">
-                  <div className={`w-2 h-2 rounded-full mt-2 ${
-                    activity.status === 'positive' ? 'bg-green-500' :
-                    activity.status === 'negative' ? 'bg-red-500' :
-                    'bg-blue-500'
-                  }`}></div>
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-900">{activity.action}</p>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Pipeline Funnel */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Sales Pipeline</h2>
+            <p className="text-xs text-gray-500 mt-1">Current deals by stage</p>
           </div>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={pipelineData} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis type="number" tick={{ fontSize: 12 }} stroke="#9ca3af" />
+              <YAxis dataKey="stage" type="category" tick={{ fontSize: 11 }} stroke="#9ca3af" width={100} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+                formatter={(value: any, _name: any, props: any) => [
+                  `${value} deals (${props.payload.value})`,
+                  'Count'
+                ]}
+              />
+              <Bar dataKey="count" fill="#3b82f6" radius={[0, 8, 8, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Upcoming Tasks */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Upcoming Tasks</h2>
-              <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                View all
-              </button>
-            </div>
-            <div className="space-y-3">
-              {[
-                { task: 'Follow up with Enterprise Corp', due: 'Today, 2:00 PM', priority: 'high', contact: 'John Smith' },
-                { task: 'Send proposal to Acme Inc', due: 'Today, 4:30 PM', priority: 'high', contact: 'Jane Doe' },
-                { task: 'Review sequence performance', due: 'Tomorrow, 10:00 AM', priority: 'medium', contact: null },
-                { task: 'Call TechStart about demo', due: 'Tomorrow, 3:00 PM', priority: 'medium', contact: 'Sarah Johnson' },
-                { task: 'Update contact information', due: 'Friday, 9:00 AM', priority: 'low', contact: null },
-              ].map((item, index) => (
-                <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                  <input type="checkbox" className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <p className="text-sm font-medium text-gray-900">{item.task}</p>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        item.priority === 'high' ? 'bg-red-100 text-red-700' :
-                        item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-200 text-gray-700'
-                      }`}>
-                        {item.priority}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">{item.due}</p>
-                    {item.contact && (
-                      <p className="text-xs text-gray-600 mt-1">Contact: {item.contact}</p>
-                    )}
+        {/* Additional AI Suggestions */}
+        <div className="space-y-3">
+          {aiSuggestions.slice(2).map((suggestion, index) => {
+            const Icon = suggestion.icon;
+            return (
+              <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 hover:border-primary-300 transition-colors">
+                <div className="flex items-start space-x-3">
+                  <div className={`p-2 rounded-lg flex-shrink-0 ${
+                    suggestion.priority === 'high' ? 'bg-red-100' : 'bg-primary-100'
+                  }`}>
+                    <Icon className={`w-4 h-4 ${
+                      suggestion.priority === 'high' ? 'text-red-600' : 'text-primary-600'
+                    }`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-gray-900 text-sm">{suggestion.title}</h4>
+                    <p className="text-xs text-gray-600 mt-1">{suggestion.description}</p>
+                    <button className="text-xs font-medium text-primary-600 hover:text-primary-700 mt-2">
+                      {suggestion.action} →
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
