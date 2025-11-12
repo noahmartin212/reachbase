@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get the Outreach Clone up and running in 5 minutes!
+Get ReachBase up and running in 5 minutes!
 
 ## Prerequisites
 
@@ -50,11 +50,11 @@ docker-compose ps
 ```
 
 You should see 5 services running:
-- `outreach_db` (PostgreSQL)
-- `outreach_redis` (Redis)
-- `outreach_backend` (API)
-- `outreach_frontend` (React app)
-- `outreach_worker` (Background jobs)
+- `reachbase_db` (PostgreSQL)
+- `reachbase_redis` (Redis)
+- `reachbase_backend` (API)
+- `reachbase_frontend` (React app)
+- `reachbase_worker` (Background jobs)
 
 ### 5. Access the Application
 
@@ -197,9 +197,9 @@ Now that everything is running, you can:
 2. **Check the Database** - Connect with a PostgreSQL client:
    - Host: `localhost`
    - Port: `5432`
-   - Database: `outreach_db`
-   - User: `outreach`
-   - Password: `outreach_dev_password`
+   - Database: `reachbase_db`
+   - User: `reachbase`
+   - Password: `reachbase_dev_password`
 
 3. **Test the API** - Use Postman or curl to test endpoints:
    ```bash
@@ -242,7 +242,7 @@ npm run worker
 
 ```bash
 # Connect to database
-docker-compose exec postgres psql -U outreach -d outreach_db
+docker-compose exec postgres psql -U reachbase -d reachbase_db
 
 # List tables
 \dt
@@ -268,9 +268,9 @@ Connect with tools like:
 Connection details:
 - Host: `localhost`
 - Port: `5432`
-- Database: `outreach_db`
-- Username: `outreach`
-- Password: `outreach_dev_password`
+- Database: `reachbase_db`
+- Username: `reachbase`
+- Password: `reachbase_dev_password`
 
 ## Environment Variables
 
@@ -278,7 +278,7 @@ Key environment variables you might want to customize:
 
 ```env
 # Database
-DATABASE_URL=postgresql://outreach:outreach_dev_password@postgres:5432/outreach_db
+DATABASE_URL=postgresql://reachbase:reachbase_dev_password@postgres:5432/reachbase_db
 
 # JWT Secret (change in production!)
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
@@ -325,4 +325,4 @@ See [ROADMAP.md](ROADMAP.md) for details.
 
 **You're all set!** 🚀
 
-Your Outreach Clone is running. Start coding!
+Your ReachBase platform is running. Start coding!

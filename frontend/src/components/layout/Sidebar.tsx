@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   RectangleStackIcon,
   DocumentTextIcon,
+  FunnelIcon,
 } from '@heroicons/react/24/outline';
 
 interface SidebarProps {
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Contacts', href: '/contacts', icon: UserGroupIcon },
   { name: 'Accounts', href: '/accounts', icon: BuildingOfficeIcon },
+  { name: 'Pipeline', href: '/pipeline', icon: FunnelIcon },
   { name: 'Sequences', href: '/sequences', icon: RectangleStackIcon },
   { name: 'Templates', href: '/templates', icon: DocumentTextIcon },
   { name: 'Emails', href: '/emails', icon: EnvelopeIcon },

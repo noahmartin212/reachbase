@@ -1,7 +1,7 @@
 {
-  "name": "outreach-backend",
+  "name": "reachbase-backend",
   "version": "1.0.0",
-  "description": "Backend API for Outreach Clone - Sales Automation Platform",
+  "description": "Backend API for ReachBase - Sales Automation Platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -16,7 +16,7 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"
   },
-  "keywords": ["sales", "automation", "crm", "email", "outreach"],
+  "keywords": ["sales", "automation", "crm", "email", "reachbase"],
   "author": "",
   "license": "MIT",
   "dependencies": {

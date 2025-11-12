@@ -5,7 +5,7 @@ This guide will help you set up and run the Outreach Clone sales automation plat
 ## Project Structure Overview
 
 ```
-outreach-clone/
+reachbase/
 ├── backend/                     # Node.js/Express API
 │   ├── src/
 │   │   ├── config/             # Database & Redis configuration
@@ -65,7 +65,7 @@ This is the easiest way to get started. Docker will handle all dependencies and 
 
 ```bash
 git clone <repository-url>
-cd outreach-clone
+cd reachbase
 ```
 
 ### 2. Set Up Environment Variables

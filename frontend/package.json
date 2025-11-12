@@ -1,7 +1,7 @@
 {
-  "name": "outreach-frontend",
+  "name": "reachbase-frontend",
   "version": "1.0.0",
-  "description": "Frontend for Outreach Clone - Sales Automation Platform",
+  "description": "Frontend for ReachBase - Sales Automation Platform",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",

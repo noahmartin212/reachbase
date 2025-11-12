@@ -1,6 +1,6 @@
-# Outreach Clone - B2B SaaS Sales Automation Platform
+# ReachBase - B2B SaaS Sales Automation Platform
 
-A modern sales automation platform built with React, Node.js, PostgreSQL, and Redis. This MVP helps sales teams automate email outreach and manage their pipeline effectively.
+A modern sales automation platform built with React, Node.js, PostgreSQL, and Redis. This MVP helps sales teams automate email campaigns and manage their pipeline effectively.
 
 ## Features
 
@@ -37,7 +37,7 @@ A modern sales automation platform built with React, Node.js, PostgreSQL, and Re
 ## Project Structure
 
 ```
-outreach-clone/
+reachbase/
 ├── backend/                 # Node.js Express API
 │   ├── src/
 │   │   ├── config/         # Configuration files
@@ -89,7 +89,7 @@ outreach-clone/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd outreach-clone
+   cd reachbase
    ```
 
 2. **Set up environment variables**

@@ -13,6 +13,7 @@ import Sequences from './pages/Sequences';
 import Templates from './pages/Templates';
 import Emails from './pages/Emails';
 import Tasks from './pages/Tasks';
+import Pipeline from './pages/Pipeline';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="templates" element={<Templates />} />
             <Route path="emails" element={<Emails />} />
             <Route path="tasks" element={<Tasks />} />
+            <Route path="pipeline" element={<Pipeline />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>

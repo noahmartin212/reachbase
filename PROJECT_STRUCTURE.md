@@ -5,7 +5,7 @@ Complete file tree for the Outreach Clone application.
 ## Root Directory
 
 ```
-outreach-clone/
+reachbase/
 ├── backend/                         # Backend API (Node.js + Express)
 ├── frontend/                        # Frontend app (React + TypeScript)
 ├── docker-compose.yml               # Docker services configuration
