@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -20,6 +21,7 @@ import {
   TrashIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
+import { SequenceBuilder } from '../components/SequenceBuilder';
 
 type ViewMode = 'templates' | 'active' | 'all';
 type TemplateCategory = 'all' | 'cold_outreach' | 'nurture' | 'demo_followup' | 'reengagement';
@@ -84,6 +86,21 @@ const Sequences: React.FC = () => {
   const [templateSearchQuery, setTemplateSearchQuery] = useState('');
   const [loadingTemplates, setLoadingTemplates] = useState(false);
 
+  // Use sequence workflow state
+  const [showUseSequenceModal, setShowUseSequenceModal] = useState(false);
+  const [selectedSequenceForUse, setSelectedSequenceForUse] = useState<any>(null);
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
+  const [contactSearch, setContactSearch] = useState('');
+  const [campaignName, setCampaignName] = useState('');
+
+  // View sequence details state
+  const [showSequenceDetails, setShowSequenceDetails] = useState(false);
+  const [selectedSequenceForView, setSelectedSequenceForView] = useState<any>(null);
+
+  // Visual builder state
+  const [showVisualBuilder, setShowVisualBuilder] = useState(false);
+  const [builderSequenceName, setBuilderSequenceName] = useState('');
+
   // Fetch templates on component mount
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -115,6 +132,14 @@ const Sequences: React.FC = () => {
       bestFor: 'Enterprise sales, new logo acquisition',
       icon: RocketLaunchIcon,
       color: 'blue', // Primary cold outreach color
+      emailSteps: [
+        { day: 1, subject: 'Quick question about {{companyName}}\'s growth strategy', type: 'Initial Outreach' },
+        { day: 3, subject: 'Following up - relevant case study', type: 'Value Add' },
+        { day: 7, subject: 'Different approach: {{pain_point}} solution', type: 'Different Angle' },
+        { day: 10, subject: 'Last try - worth 15 minutes?', type: 'Final Attempt' },
+        { day: 14, subject: 'Breaking up is hard to do', type: 'Breakup Email' },
+        { day: 21, subject: 'New feature: thought of you', type: 'Re-engagement' },
+      ],
     },
     {
       id: 2,
@@ -127,6 +152,13 @@ const Sequences: React.FC = () => {
       bestFor: 'SDR teams, pipeline generation',
       icon: RocketLaunchIcon,
       color: 'indigo', // Variant of blue for cold outreach
+      emailSteps: [
+        { day: 1, subject: "Saw you're hiring for {{role}} - quick idea", type: 'Initial Outreach' },
+        { day: 2, subject: 'Re: {{companyName}} + our solution', type: 'Quick Follow-up' },
+        { day: 5, subject: '3 companies like yours using this', type: 'Social Proof' },
+        { day: 8, subject: 'Last thing - 2 minute video', type: 'Video Outreach' },
+        { day: 12, subject: 'Closing the loop', type: 'Final Touch' },
+      ],
     },
     {
       id: 3,
@@ -189,6 +221,13 @@ const Sequences: React.FC = () => {
       bestFor: 'Demo-driven sales, closing pipeline',
       icon: FireIcon,
       color: 'orange', // Hot opportunity, close to closing
+      emailSteps: [
+        { day: 1, subject: 'Thanks for the demo - custom deck attached', type: 'Immediate Follow-up' },
+        { day: 2, subject: 'Pricing breakdown for {{companyName}}', type: 'Pricing Details' },
+        { day: 4, subject: 'Answering your security questions', type: 'Address Concerns' },
+        { day: 7, subject: 'Next steps to get started', type: 'Call to Action' },
+        { day: 10, subject: 'Ready when you are', type: 'Gentle Nudge' },
+      ],
     },
     {
       id: 8,
@@ -251,6 +290,18 @@ const Sequences: React.FC = () => {
       icon: ArrowPathIcon,
       color: 'purple', // Consistent revival color
     },
+  ];
+
+  // Mock contacts for sequence workflow
+  const mockContacts = [
+    { id: '1', name: 'John Smith', email: 'john@enterprise.com', company: 'Enterprise Corp' },
+    { id: '2', name: 'Jane Doe', email: 'jane@techstart.com', company: 'TechStart Inc' },
+    { id: '3', name: 'Mike Johnson', email: 'mike@innovate.io', company: 'Innovate Solutions' },
+    { id: '4', name: 'Sarah Williams', email: 'sarah@growth.co', company: 'Growth Partners' },
+    { id: '5', name: 'David Brown', email: 'david@venture.com', company: 'Venture Capital LLC' },
+    { id: '6', name: 'Emily Davis', email: 'emily@scale.io', company: 'Scale Ventures' },
+    { id: '7', name: 'Robert Miller', email: 'robert@engage.com', company: 'Engage Marketing' },
+    { id: '8', name: 'Lisa Anderson', email: 'lisa@connect.io', company: 'Connect CRM' },
   ];
 
   // Active sequences (user's running campaigns)
@@ -391,6 +442,60 @@ const Sequences: React.FC = () => {
     }
   };
 
+  // Use sequence workflow handlers
+  const handleUseSequence = (template: any) => {
+    setSelectedSequenceForUse(template);
+    setCampaignName(`${template.name} Campaign`);
+    setShowUseSequenceModal(true);
+  };
+
+  const handleViewSequenceDetails = (template: any) => {
+    setSelectedSequenceForView(template);
+    setShowSequenceDetails(true);
+  };
+
+  const handleStartCampaign = () => {
+    console.log('[DEMO MODE] Campaign setup:', {
+      sequenceName: selectedSequenceForUse?.name,
+      campaignName: campaignName,
+      contactCount: selectedContacts.length,
+      contacts: selectedContacts,
+    });
+
+    // Show success message for demo
+    alert(
+      `✅ Campaign Setup Complete (Demo Mode)\n\n` +
+      `Campaign: "${campaignName}"\n` +
+      `Sequence: ${selectedSequenceForUse?.name}\n` +
+      `Contacts: ${selectedContacts.length}\n` +
+      `Steps: ${selectedSequenceForUse?.steps} emails\n\n` +
+      `In production, this would:\n` +
+      `• Schedule ${selectedSequenceForUse?.steps} emails per contact\n` +
+      `• Track opens, clicks, and replies\n` +
+      `• Automatically pause on reply\n` +
+      `• Show in Active Campaigns tab`
+    );
+
+    setShowUseSequenceModal(false);
+    setSelectedContacts([]);
+    setContactSearch('');
+    setCampaignName('');
+  };
+
+  const toggleContact = (contactId: string) => {
+    setSelectedContacts(prev =>
+      prev.includes(contactId)
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+  };
+
+  const filteredContacts = mockContacts.filter(contact =>
+    contact.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
+    contact.email.toLowerCase().includes(contactSearch.toLowerCase()) ||
+    contact.company.toLowerCase().includes(contactSearch.toLowerCase())
+  );
+
   const filteredTemplates = templates
     .filter(template => {
       const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
@@ -442,11 +547,14 @@ const Sequences: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => {
+            setBuilderSequenceName('New Sequence');
+            setShowVisualBuilder(true);
+          }}
           className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 flex items-center"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
-          Create Custom Sequence
+          Create New Sequence
         </button>
       </div>
 
@@ -610,9 +718,20 @@ const Sequences: React.FC = () => {
                     <p className="text-sm text-gray-700">{template.bestFor}</p>
                   </div>
 
-                  <button className="w-full px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
-                    Use This Template
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleViewSequenceDetails(template)}
+                      className="flex-1 px-4 py-2 border-2 border-primary-600 text-primary-600 text-sm font-medium rounded-lg hover:bg-primary-50 transition-colors"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => handleUseSequence(template)}
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                    >
+                      Use This
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -1151,6 +1270,397 @@ const Sequences: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Use Sequence Modal */}
+      {showUseSequenceModal && selectedSequenceForUse && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Start Campaign</h2>
+                <p className="text-sm text-gray-500 mt-1">{selectedSequenceForUse.name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowUseSequenceModal(false);
+                  setSelectedContacts([]);
+                  setContactSearch('');
+                  setCampaignName('');
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+              {/* Campaign Name */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Campaign Name
+                </label>
+                <input
+                  type="text"
+                  value={campaignName}
+                  onChange={(e) => setCampaignName(e.target.value)}
+                  placeholder="Enter campaign name..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Sequence Preview */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Sequence Preview</h3>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-start space-x-3 mb-3">
+                    <div className={`p-2 rounded-lg ${getColorClasses(selectedSequenceForUse.color).bg}`}>
+                      {(() => {
+                        const Icon = selectedSequenceForUse.icon;
+                        return <Icon className={`w-5 h-5 ${getColorClasses(selectedSequenceForUse.color).text}`} />;
+                      })()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{selectedSequenceForUse.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">{selectedSequenceForUse.description}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 mt-4 mb-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <EnvelopeIcon className="w-4 h-4 mr-2" />
+                      <span>{selectedSequenceForUse.steps} emails</span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <UserGroupIcon className="w-4 h-4 mr-2" />
+                      <span>{selectedSequenceForUse.persona}</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <ChartBarIcon className="w-4 h-4 mr-2 text-gray-600" />
+                      <span className="text-green-600 font-semibold">{selectedSequenceForUse.avgReplyRate} reply rate</span>
+                    </div>
+                  </div>
+
+                  {/* Email Steps Timeline */}
+                  {selectedSequenceForUse.emailSteps && (
+                    <div className="border-t border-gray-200 pt-4 mt-4">
+                      <p className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">Email Flow</p>
+                      <div className="space-y-2">
+                        {selectedSequenceForUse.emailSteps.map((step: any, index: number) => (
+                          <div key={index} className="flex items-start space-x-3 text-sm">
+                            <div className="flex-shrink-0 w-16 text-xs font-medium text-gray-500">
+                              Day {step.day}
+                            </div>
+                            <div className="flex-1 bg-white rounded-lg p-2 border border-gray-200">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-primary-600">{step.type}</span>
+                                <EnvelopeIcon className="w-3 h-3 text-gray-400" />
+                              </div>
+                              <p className="text-xs text-gray-700 mt-1">{step.subject}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact Selection */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  Select Contacts ({selectedContacts.length} selected)
+                </h3>
+
+                {/* Search */}
+                <div className="mb-4 relative">
+                  <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search contacts..."
+                    value={contactSearch}
+                    onChange={(e) => setContactSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Contact List */}
+                <div className="space-y-2 max-h-80 overflow-y-auto">
+                  {filteredContacts.map((contact) => (
+                    <div
+                      key={contact.id}
+                      onClick={() => toggleContact(contact.id)}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        selectedContacts.includes(contact.id)
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedContacts.includes(contact.id)}
+                            onChange={() => toggleContact(contact.id)}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-900">{contact.name}</p>
+                            <p className="text-sm text-gray-600">{contact.email}</p>
+                            <p className="text-xs text-gray-500">{contact.company}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+              <p className="text-sm text-gray-600">
+                {selectedContacts.length} {selectedContacts.length === 1 ? 'contact' : 'contacts'} selected
+              </p>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => {
+                    setShowUseSequenceModal(false);
+                    setSelectedContacts([]);
+                    setContactSearch('');
+                    setCampaignName('');
+                  }}
+                  className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleStartCampaign}
+                  disabled={selectedContacts.length === 0 || !campaignName.trim()}
+                  className={`px-6 py-2 rounded-lg font-medium flex items-center space-x-2 ${
+                    selectedContacts.length > 0 && campaignName.trim()
+                      ? 'bg-primary-600 text-white hover:bg-primary-700'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  <span>Start Campaign {selectedContacts.length > 0 && `with ${selectedContacts.length}`}</span>
+                  <span className="text-xs bg-white bg-opacity-20 px-2 py-0.5 rounded">Demo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sequence Details Modal */}
+      {showSequenceDetails && selectedSequenceForView && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+              <div className="flex items-center space-x-4">
+                <div className={`p-3 rounded-lg ${getColorClasses(selectedSequenceForView.color).bg}`}>
+                  {(() => {
+                    const Icon = selectedSequenceForView.icon;
+                    return <Icon className={`w-6 h-6 ${getColorClasses(selectedSequenceForView.color).text}`} />;
+                  })()}
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{selectedSequenceForView.name}</h2>
+                  <p className="text-sm text-gray-600 mt-1">{selectedSequenceForView.description}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSequenceDetails(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+              {/* Stats Overview */}
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <EnvelopeIcon className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-blue-900">{selectedSequenceForView.steps}</p>
+                  <p className="text-xs text-blue-600 font-medium">Email Steps</p>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <ChartBarIcon className="w-5 h-5 text-green-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-green-900">{selectedSequenceForView.avgReplyRate}</p>
+                  <p className="text-xs text-green-600 font-medium">Avg Reply Rate</p>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <UserGroupIcon className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-purple-900">{selectedSequenceForView.persona}</p>
+                  <p className="text-xs text-purple-600 font-medium">Target Persona</p>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <SparklesIcon className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-orange-900 capitalize">{selectedSequenceForView.category.replace('_', ' ')}</p>
+                  <p className="text-xs text-orange-600 font-medium">Category</p>
+                </div>
+              </div>
+
+              {/* Best For Section */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-900 mb-2">Best For</h3>
+                <p className="text-gray-700">{selectedSequenceForView.bestFor}</p>
+              </div>
+
+              {/* Email Flow Timeline */}
+              {selectedSequenceForView.emailSteps && (
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Complete Email Flow</h3>
+                  <div className="space-y-4">
+                    {selectedSequenceForView.emailSteps.map((step: any, index: number) => (
+                      <div key={index} className="relative pl-8 pb-4 border-l-2 border-gray-300 last:border-l-0 last:pb-0">
+                        {/* Timeline dot */}
+                        <div className="absolute left-0 top-0 w-4 h-4 rounded-full bg-primary-600 border-4 border-white transform -translate-x-1/2" />
+
+                        <div className="bg-white rounded-lg p-5 border-2 border-gray-200 hover:border-primary-300 transition-all shadow-sm">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                DAY {step.day}
+                              </span>
+                              <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full">
+                                {step.type}
+                              </span>
+                            </div>
+                            <EnvelopeIcon className="w-5 h-5 text-gray-400" />
+                          </div>
+
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">Subject Line:</h4>
+                          <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded border border-gray-200 font-mono">
+                            {step.subject}
+                          </p>
+
+                          {/* Mock body preview */}
+                          <div className="mt-3">
+                            <h4 className="text-xs font-semibold text-gray-600 mb-1">Email Preview:</h4>
+                            <p className="text-xs text-gray-500 italic">
+                              Personalized content with dynamic fields like company name, pain points, and value propositions...
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* If no email steps */}
+              {!selectedSequenceForView.emailSteps && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                  <SparklesIcon className="w-12 h-12 text-yellow-600 mx-auto mb-3" />
+                  <p className="text-sm text-yellow-800 font-medium">
+                    This sequence template has {selectedSequenceForView.steps} email steps.
+                  </p>
+                  <p className="text-xs text-yellow-600 mt-2">
+                    Detailed email flow coming soon for this template.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={() => setShowSequenceDetails(false)}
+                className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setShowSequenceDetails(false);
+                  handleUseSequence(selectedSequenceForView);
+                }}
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium flex items-center space-x-2"
+              >
+                <RocketLaunchIcon className="w-5 h-5" />
+                <span>Use This Sequence</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Visual Sequence Builder Modal */}
+      {showVisualBuilder && createPortal(
+        <div className="fixed inset-0 bg-gradient-to-br from-black/70 to-black/50 z-50 p-12">
+          <div className="bg-white w-full h-full flex flex-col overflow-hidden rounded-xl shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-3 border-b bg-white flex-shrink-0">
+              <input
+                type="text"
+                value={builderSequenceName}
+                onChange={(e) => setBuilderSequenceName(e.target.value)}
+                className="text-lg font-bold text-gray-900 border-0 focus:ring-0 px-2 py-1 rounded hover:bg-gray-50"
+                placeholder="Sequence Name"
+              />
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => {
+                    console.log('Sequence saved');
+                    setShowVisualBuilder(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Save Draft
+                </button>
+                <button
+                  onClick={() => {
+                    setShowVisualBuilder(false);
+                    setShowUseSequenceModal(true);
+                    setSelectedSequenceForUse({
+                      id: 'new',
+                      name: builderSequenceName,
+                      description: 'New sequence',
+                      status: 'draft',
+                      color: 'blue',
+                      steps: [],
+                      stats: { total_contacts: 0, active: 0, completed: 0, replied: 0 },
+                      performance: { open_rate: 0, reply_rate: 0, click_rate: 0 },
+                      created_at: new Date().toISOString(),
+                    });
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+                >
+                  <RocketLaunchIcon className="w-4 h-4" />
+                  <span>Launch Sequence</span>
+                </button>
+                <button
+                  onClick={() => setShowVisualBuilder(false)}
+                  className="text-gray-400 hover:text-gray-600 text-xl px-3"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <SequenceBuilder
+                sequenceName={builderSequenceName}
+                onSave={(steps) => {
+                  console.log('Sequence saved:', { steps });
+                  setShowVisualBuilder(false);
+                }}
+              />
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
